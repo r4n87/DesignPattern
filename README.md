@@ -1,4 +1,10 @@
-# 싱글톤 Singleton
+#Design Pattern
+1. [Singleton](1-싱글톤-Singleton)
+2. [Factory Method](2-팩토리-메서드-Factory-Method)
+3. [Abstract Factory](3-추상-팩토리-Abstract-Factory)
+
+
+## 1. 싱글톤 Singleton
 
 * 어떠한 클래스(객체)가 유일하게 1개만 존재할 때 사용
 * 서로 자원을 공유할 때 사용
@@ -66,6 +72,109 @@ public class Holder {
 - Holder안에 선언된 instance가 static이기 때문에 클래스 로딩 시점에 한번만 호출되며, final 객체이므로 값이 다시 할당되지 않음
 - 가장 많이 사용하고 일반적인 Singleton 클래스 사용법
 
-# Reference
+## Reference
 Fastcampus 한 번에 끝내는 Java/Spring 웹 개발 마스터 초격차 패키지 Online.
 https://jeong-pro.tistory.com/86
+
+
+## 2. 팩토리 메서드 Factory Method
+* Creational - Class
+
+### 목적
+* 오브젝트를 생성하고, 하위 클래스가 실제 생성 프로세스를 제어할 수 있도록함
+
+### Use When
+* 어떠한 클래스를 사용해서 클래스를 생성해야할 지 모를 때
+* 부모 클래스가 하위 클래스에게 클래스 생성을 넘기고자 할 때
+
+### 특징
+* 하위 클래스가 어떠한 object를 생성할지 정하게 함으로써 object 생성을 캡슐화함
+* 인터페이스에 object 생성에 대해 기술하나, 하위 클래스가 어떠한 클래스를 instantiation할지 정하게 함
+* DIP(Dependency Inversion Principle): 상위 레벨의component는 낮은 레벨의 component에 의존하지 않음
+* inheritance를 활용함
+
+```
+abstract class DonutFactory {
+    protected abstract Donut makeDonut();
+    public void packingDonut() {
+        private final Donut donut = makeDonut();
+        .
+        .
+        .
+    }
+}
+```
+```
+class ChocoDonutFactory extends DonutFactory {
+   @Override
+   protected Donut makeDonut() {
+       return new ChocoDonut();
+   }
+}
+```
+![hmm drawio (2)](https://user-images.githubusercontent.com/82352179/146678299-4de8b508-3de5-4a82-b34e-4176b8be1774.png)
+
+
+
+## 3. 추상 팩토리 Abstract Factory
+* Creational - Object
+
+### 목적
+* 생성 콜을 delegation하는 인터페이스를 제공하여 하위 클래스가 구체적인 object를 생성할 수 있도록 함
+
+### Use When
+* Object 생성이 시스템으로부터 독립적이어야 할 때
+* Object의 그룹이 함께 쓰여야 할 때
+* 상세 구현법에 대해 노출하고 싶지 않을 때
+
+### 특징
+* Factory Method보다 abstraction 레벨이 높음
+* Composition & delegation을 활용함
+
+### 장점
+* 구체적인 클래스를 분리함
+* product 간의 consistency를 지킬 수 있음
+
+### 단점
+* 새로운 종류의 product 생성이 어려움 (not impossible, but costly)
+
+```
+interface DonutStore {
+   Donut makeDonut();
+   Coffee makeCoffee();
+}
+```
+```
+public class ChocoDonutStore implements DonutStore {
+    Donut makeDonut() {
+        return new ChocoDonut();
+    }
+    
+    Coffee makeCoffee() {
+        return new ChocoCoffee();
+    }
+}
+```
+```
+public class MilkDonutStore implements DonutStore {
+    Donut makeDonut() {
+        return new MilkDonut();
+    }
+    
+    Coffee makeCoffee() {
+        return new MilkCoffee();
+    }
+}
+```
+![hmm drawio (1)](https://user-images.githubusercontent.com/82352179/146678162-f1b87bc8-e3e6-4276-bf03-fb9d5a2d206c.png)
+
+
+## Factory Method vs. Abstract Factory
+### 공통점
+* Creational Pattern
+* Object의 생성을 하위 클래스가 수행할 수 있도록 함
+### 차이점
+* FM: 인터페이스를 정의하고, 하위 클래스가 어떠한 클래스를 instantiation할지 정하게 함
+* AF: 인터페이스를 제공하나, 특정한 클래스에 대해 구체화하지 않고 "families of related or dependent objects"의 형태로 제공
+
+
