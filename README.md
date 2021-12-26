@@ -2,6 +2,8 @@
 1. [Singleton](1-싱글톤-Singleton)
 2. [Factory Method](2-팩토리-메서드-Factory-Method)
 3. [Abstract Factory](3-추상-팩토리-Abstract-Factory)
+4. [Builder](4-빌더-Builder)
+5. [Prototype](5-프로토타입-Prototype)
 
 
 ## 1. 싱글톤 Singleton
@@ -178,3 +180,256 @@ public class MilkDonutStore implements DonutStore {
 * AF: 인터페이스를 제공하나, 특정한 클래스에 대해 구체화하지 않고 "families of related or dependent objects"의 형태로 제공
 
 
+## 4. 빌더 Builder
+* Creational - Object
+
+### 목적
+* 쉽게 변할 수 있는 알고리즘 기반의 object를 다양하게 생성할 수 있게 함
+
+### Use When
+* 생성 시 runtime control이 필요할 때
+* 다양한 생성 알고리즘이 필요할 때
+* 오브젝트 생성 알고리즘이 시스템으로부터 분리되어야 할 때
+* 새로 생성 시 코어 알고리즘의 변경이 없어야 할 
+
+### 특징
+* 인터페이스가 자주 변할 때 사용하지 않는 것이 좋음
+* composite object or data structure 생성에 좋음
+* vs. Abstract Factory: 빌더는 step-by-step, AF는 결과가 바로 나옴
+
+### 예시
+* POS: 주문 기계, 주문을 받아서 전달하는 역할을 함
+* 점원: 주문을 전달 받아 커피를 만듦
+* 기계: 기계에 따라 다른 추출 방식의 커피
+
+```
+public class Pos {
+    private CoffeeMachine coffeeMachine;
+    
+    public void setCoffeeMachine(CoffeeMachine ce) {
+        coffeeMachine = ce;
+    }
+    
+    public Coffee getCoffee() {
+        return coffeeMachine.getCoffee();
+    }
+    
+    public void makeCoffee() {
+        coffeeMachine.makeNewCoffee();
+        coffeeMachine.getWater();
+        coffeeMachine.adjustTemp();
+        coffeeMachine.getShots();
+        coffeeMachine.pourIntoCup();
+    }
+}
+```
+
+```
+public abstract class CoffeeMachine {
+    protected Coffee coffee;
+    protected String customer;
+    protected String type;
+    
+    public Coffee getCoffee() {
+        return coffee;
+    }
+    
+    pubic void makeNewCoffee() {
+        coffee = new Coffee(customer, type);
+    }
+    
+    public abstract void getWater();
+    public abstract void adjustTemp();
+    public abstract void getShots();
+    public abstract void pourIntoCup();
+}
+```
+```
+public class Coffee {
+    private String type;
+    private String customer;
+
+    private int cc;
+    private int temperature;
+    private String bean;
+    private int shotCnt;
+    private String cup;
+
+    
+    Coffee (String customer, String type) {
+        this.customer = customer;
+        this.type = type;
+    }
+    
+    public void setCC(int c) { this.cc = c; }
+    public void setTemperature(int t) { this.temperature = t; }
+    public void setShot(String b, int s) { 
+        this.bean = b; 
+        this.shotCnt = s;
+    }
+    public void setCup(String c) { this.cup = c; } 
+    
+    public String getCustomer() { return customer; }
+    public String getType() { return type; }
+}
+```
+```
+public class HandDrip extends CoffeeMachine {
+    HandDrip (String customer) {
+        super.customer = customer;
+        super.type = "Hand Drip Columbia";
+    }
+    
+    public void getWater() {
+        coffee.setCC(300);
+    }
+    
+    public void adjustTemp() {
+        coffee.setTemparature(70);
+    }
+    
+    public void getShots() {
+        coffee.setShot("Columbia", 2);
+    }
+    
+    public void pourIntoCup() {
+        coffee.setCup("Mug");
+    }
+}
+```
+```
+public class ColdBrew extends CoffeeMachine {
+    ColdBrew (String customer) {
+        super.customer = customer;
+        super.type = "Cold Brew Guatemala";
+    }
+    
+    public void getWater() {
+        coffee.setCC(400);
+    }
+    
+    public void adjustTemp() {
+        coffee.setTemparature(5);
+    }
+    
+    public void getShots() {
+        coffee.setShot("Guatemala", 2);
+    }
+    
+    public void pourIntoCup() {
+        coffee.setCup("Glass");
+    }
+}
+```
+
+```
+public class CoffeeExample {
+    public static void main(String[] args) {
+        Pos pos = new Pos();
+        CoffeeMachine cfmc = new CoffeeMachine("Jennie");
+        
+        pos.setCoffeeMachine(cfmc);
+        pos.makeCoffee();
+        Coffee completedHandDrip = pos.getCoffee();
+        System.out.println(completedHandDrip.getType() + 
+            " is completed and ready for delivery to " +
+            completedHandDrip.getCustomer());        
+    }
+}
+```
+
+![Untitled Diagram drawio (2)](https://user-images.githubusercontent.com/82352179/147398352-d86bbe23-6638-4f99-8594-ed939ac29062.png)
+
+
+## 5. 프로토타입 Prototype
+* Creational - Object
+
+### 목적
+* 생성할 객체들의 타입이 프로토타입인 인스턴스로부터 결정되도록 함
+* 인스턴스는 새 객체를 만들기 위해 자신을 복제하는 패턴
+
+### Use When
+* 비슷한 객체를 자주 생성해야 할 때
+* 객체 생성 시마다 드는 비용 낭비를 막으려고 할 
+
+### 특징
+* 객체를 수정하거나 테스트할 때 매번 새로운 객체를 생성하지 않음
+* 기존에 만들어놓은 Prototype을 복제하고 필요한 부분만 수정
+* 깊은 복사와 얕은 복사에 주의하여 활용해야 함
+
+### 예시
+* 원형
+* 지름 사이즈가 변하는 원형 구현
+
+```
+public interface Shape extends Cloneable {
+    void isType();
+}
+```
+
+```
+public class Circle implements Shape {
+    private int startX, StartY, diameter;
+    public static final int pie = 3;
+    
+    public Circle(int startX, int startY, int diameter) {
+        this.startX = startX;
+        this.startY = startY;
+        this.diameter = diameter;
+    }
+    
+    public int getStartX() {
+        return startX;
+    }
+    
+    public void setStartX(int startX) {
+        this.startX = startX;
+    }
+    
+    public int getStartY() {
+        return startY;
+    }
+    
+    public void setStartY(int startY) {
+        this.startY = startY;
+    }
+    
+    public int getDiameter() {
+        return diameter;
+    }
+    
+    public void setDiameter(int diameter) {
+        this.diameter = diameter;
+    }
+    
+    public Circle copy() throws CloneNotSupportedException {
+        Circle circle = (Circle) clone();
+        return circle;
+    }
+    
+    @Override
+    public void isType() {
+        System.out.println("This circle is ");
+        System.out.println("X: " + startX + ", Y: " + startY + ", 지름: " + diameter);
+        System.out.println(", 너비: " + 2/diameter * pie);
+    }
+}
+```
+```
+public class Main {
+   public static void main(String[] args) throws CloneNotSupportedException {
+      Circle circle1 = new Circle(3,5,10);
+      Circle circle2 = circle1.copy();
+      circle2.setStartX(circle1.getStartY());
+      circle2.setStartY(circle1.getStartY());
+      
+      circle1.isType();
+      circle2.isType();
+   }
+}
+```
+
+![Untitled Diagram drawio (1)](https://user-images.githubusercontent.com/82352179/147398235-85216317-b406-4402-b5c6-1ff8e0cc2337.png)
+
+## Reference
+Libi의 블로그 프로토타입 패턴 https://sorjfkrh5078.tistory.com/
