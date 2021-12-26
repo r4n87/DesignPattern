@@ -1,9 +1,9 @@
 #Design Pattern
-1. [Singleton](1-싱글톤-Singleton)
-2. [Factory Method](2-팩토리-메서드-Factory-Method)
-3. [Abstract Factory](3-추상-팩토리-Abstract-Factory)
-4. [Builder](4-빌더-Builder)
-5. [Prototype](5-프로토타입-Prototype)
+1. [Singleton](#1-싱글톤-Singleton)
+2. [Factory Method](#2-팩토리-메서드-Factory-Method)
+3. [Abstract Factory](#3-추상-팩토리-Abstract-Factory)
+4. [Builder](#4-빌더-Builder)
+5. [Prototype](#5-프로토타입-Prototype)
 
 
 ## 1. 싱글톤 Singleton
