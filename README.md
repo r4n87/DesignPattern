@@ -4,6 +4,8 @@
 3. [Abstract Factory](#3-추상-팩토리-Abstract-Factory)
 4. [Builder](#4-빌더-Builder)
 5. [Prototype](#5-프로토타입-Prototype)
+6. [Adapter](#6-어댑터-Adapter)
+7. [Bridge](#7-브릿지-Bridge)
 
 
 ## 1. 싱글톤 Singleton
@@ -345,7 +347,7 @@ public class CoffeeExample {
 * Creational - Object
 
 ### 목적
-* 생성할 객체들의 타입이 프로토타입인 인스턴스로부터 결정되도록 함
+* 생성할 객체들의 타입이 프로토타입인 인스턴스로부터 결정되도록 함* 
 * 인스턴스는 새 객체를 만들기 위해 자신을 복제하는 패턴
 
 ### Use When
@@ -433,3 +435,182 @@ public class Main {
 
 ## Reference
 Libi의 블로그 프로토타입 패턴 https://sorjfkrh5078.tistory.com/
+
+## 6. 어댑터 Adapter
+* Structural - Class, Object
+* = Wrapper
+
+### 목적
+* 공통 오브젝트를 생성하기 위해서 다른 인터페이스들을 사용할 수 있도록 함
+
+### Use When
+* 클래스가 해당 인터페이스를 쓸 수 있는 조건이 되지 않을 때, 쓸 수 있도록 함
+
+### 사용
+* 클라이언트 - (method 사용 요청) -> adapter
+* adapter - (요청 전달) -> adaptee
+* adapter - (결과 전달) -> client
+* Object Adapter: composition and delegation
+* Class Adapter: inheritance
+
+### 구현
+### Adaptee Class
+```
+public class Bread {
+    private String flavor;
+    
+    public Bread(String flavor) {
+        this.flavor = flavor;
+    }
+    
+    public makeBread() {
+        System.out.println(flavor + "맛이 나는 빵을 만들어요.");
+    }
+}
+```
+### Target Interface
+```
+public interface Bake {
+    public abstract void adjustTemp();
+    public abstract void adjustTime();
+}
+```
+### Adapter Class
+```
+public class BakeBread extends Bread implements Bake {
+    public BakeBread(String flavor) {
+        super(flavor);
+    }
+    
+    @Override
+    public void adjustTemp() {
+        System.out.println("빵을 굽기 위한 온도인 60도로 세팅합니다.");
+        makeBread();
+    }
+    
+    @Override
+    public void adjustTime() {
+        System.out.println("빵을 굽기 위한 시간인 30분으로 세팅합니다.");
+        makeBread();
+    }
+}
+```
+
+### 다이어그램
+![Untitled Diagram drawio (4)](https://user-images.githubusercontent.com/82352179/147877819-20274dea-d7ce-4d03-a809-26b4fbc53bf2.png)
+
+
+## 7. 브릿지 Bridge
+* Structural - Object
+
+### 목적
+* 커플링을 막기 위해 추상 오브젝트 구조를 독립적으로 정의함
+
+### Use When
+* 추상화와 구현이 컴파일 시점에 묶이지 않아야 할 때
+* 추상화와 구현이 독립적으로 확장가능해야 할 때
+* 클라이언트로부터 구현에 대한 디테일을 감추어야 할 때
+* 기능 클래스 계층과 구현 클래스 계층을 연결할 때
+
+### Adapter와의 비교
+* 구현에 대한 디테일을 감춘다는 점에서 비슷함
+* 어댑터 패턴은 관련 없는 컴포넌트들이 같이 일하도록 만듦 -> Applied to systems after they'res designed
+* 브릿지 패턴은 추상화와 구현이 독립적으로 움직일 수 있도록 -> used up-front in a design
+* 어댑터 패턴은 하나의 인터페이스만 추상화함
+* 브릿지 패턴은 구현과정으로 부터 복잡한 엔티티를 추상화함
+
+### 구현
+### 기능 클래스 계층의 상위 클래스
+```
+public class Tv {
+    private TvImpl impl;
+    
+    public Tv(TvImpl impl) {
+        this.impl = impl;
+    }
+    
+    public void turnOn() {
+        impl.rawTurnOn();
+    }
+    
+    public void setChannel() {
+        impl.rawSetChannel();
+    }
+    
+    public void turnOff() {
+        impl.rawTurnOff();
+    }
+    
+    public final void showTv() {
+        turnOn();
+        setChannel();
+        turnOff();
+    }
+}
+```
+### 기능 클래스 계층의 하위 클래스
+```
+public class DualTv extends Tv {
+    public DualTv(TvImpl impl) {
+        super(impl);
+    }
+    
+    public void showDualTv() {
+        turnOn();
+        for(int i = 0; i < 2; i++) {
+            setChannel();
+        }
+        turnOff();
+    }
+}
+```
+### 구현 클래스 계층의 최상위 
+```
+public interface TvImpl {
+    public void rawTurnOn();
+    public void rawSetChannel();
+    public void rawTurnOff();
+}
+```
+### 구현 클래스 계층의 하위
+```
+public class 3DTvImpl implements TvImpl {
+    private boolean 3DOn;
+    private int count;
+    private Channel channel;
+    
+    public 3DTvImpl(boolean 3DOn) {
+        this.3DOn = 3DOn;
+    }
+    
+    @Override
+    public void rawTurnOn() {
+        System.out.println("3D turn on");
+    }
+    
+    @Override
+    public void rawSetChannel() {
+        int channel = getChannel();
+        System.out.println("3D Channel number is " + channel + ".");
+    }
+    
+    @Override
+    public void rawTurnOff() {
+        System.out.println("3D turn off");
+    }
+    
+    private int getChannel() {
+        for(int i = 0; i < count; i++) {
+            if("3D".equals(channel.getType())) {
+                return channel.getNumber();
+            }
+        }
+    }
+}
+```
+
+### 다이어그램
+![Untitled Diagram drawio (3)](https://user-images.githubusercontent.com/82352179/147877494-e56f3f82-9003-4769-9b75-664b05ac4d41.png)
+
+## Reference
+https://lee1535.tistory.com/72?category=819409
