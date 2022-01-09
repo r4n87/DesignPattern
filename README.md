@@ -6,6 +6,8 @@
 5. [Prototype](#5-프로토타입-Prototype)
 6. [Adapter](#6-어댑터-Adapter)
 7. [Bridge](#7-브릿지-Bridge)
+8. [Composite](#8-컴포짓-Composite)
+9. [Decorator](#9-데코레이터-Decorator)
 
 
 ## 1. 싱글톤 Singleton
@@ -614,3 +616,221 @@ public class 3DTvImpl implements TvImpl {
 
 ## Reference
 https://lee1535.tistory.com/72?category=819409
+
+
+
+## 8. 컴포짓 Composite
+* Structural - Object
+
+### 목적
+* 오브젝트의 수직적 구조를 만들기 위해 사용
+* 각 오브젝트는 독립적으로, 혹은 같은 interface를 사용하는 오브젝트 그룹으로도 사용됨
+
+### Use When
+* 오브젝트간의 수직적(상하) 구조를 나타내야 할 때
+* 오브젝트들과, 합성된 오브젝트들이 하나로 취급되어야 할 때
+
+### Decorator와의 비교
+* 비슷한 구조의 diagram을 가지고 있음 -> recursive composition
+* 컴포짓은 embelishment(장식) 보다 representation(표현)에 중점을 둠
+* 데코레이터는 subclassing을 하지 않고 각 오브젝트에 역할을 부여함(responsibility)
+
+### 구현
+### Component 클래스
+```
+public abstract class KeyboardComponent {
+    public void add();
+    public void remove();
+    public double getPrice();
+    public String getName();
+}
+```
+
+### Leaf 클래스
+```
+public class KeyCap extends KeyboardComponent {
+    private double price;
+    private String name;
+    
+    public KeyCap(double price, String name) {
+        this.price = price;
+        this.name = name;
+    }
+    
+    public double getPrice() {
+        return price;
+    }
+    
+    public String getName() {
+        return name;
+    }
+}
+```
+```
+public class Switch extends KeyboardComponent {
+    private double price;
+    private String name;
+    
+    public Switch(double price, String name) {
+        this.price = price;
+        this.name = name;
+    }
+    
+    public double getPrice() {
+        return price;
+    }
+    
+    public String getName() {
+        return name;
+    }
+}
+```
+
+### Composite 클래스
+```
+public class Keyboard extends KeyboardComponent {
+    private List<KeyboardComponent> components = new ArrayList<KeyboardComponent>();
+    public add(KeyboardComponent component) {
+        components.add(component);
+    }
+    
+    public remove(KeyboardComponent component) [
+        components.remove(component);
+    }
+    
+    public double getPrice() {
+        double result = 0;
+        for(KeyboardComponent component : components) {
+            result += component.getPrice();
+        }
+        
+        return result;
+    }
+    
+    public String getName() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("키보드 구성품: ");
+        for(KeyboardComponent component : components) {
+            sb.append(component.getName());
+            sb.append(" ");
+        }
+        
+        return sb.toString();
+    }
+}
+```
+
+### 다이어그램
+![Untitled Diagram drawio (6)](https://user-images.githubusercontent.com/82352179/148687779-e014c7bd-ea66-41e7-8f0c-757fa5321931.png)
+
+
+## 8. 데코레이터 Decorator
+* Structural - Object
+
+### 목적
+* 기존의 역할을 수정하기 위하여 다양한 wrapping 적용
+
+### Use When
+* 오브젝트의 역할이 수시로 변할 때
+* 구체적인 구현이 역할로부터 decoupling 되어야 할 때
+* 특정 기능이 오브젝트 수직적 구조가 아닐 때
+
+### Principle
+* OCP(Open-closed Principle)
+* composition, delegation
+
+### 단점
+* 너무 많은 작은 클래스를 만들게 됨
+* 패턴과 친숙하지 않으면 이해하기 어려움
+
+### 구현
+### 상위 클래스
+```
+public abstract class Smoothie {
+    protected String description = "Unknow Smoothie";
+    
+    public String description() {
+        return description;
+    }
+    
+    public abstract int cost();
+}
+```
+### Concrete 클래스
+```
+public class OrangeSmoothie {
+    public OrangeSmoothie() {
+        description = "Orange Smoothie";
+    }
+    
+    public int cost() {
+        return 5000;
+    }
+}
+```
+```
+public class MangoSmoothie {
+    public MangoSmoothie() {
+        description = "Mango Smoothie";
+    }
+    
+    public int cost() {
+        return 6000;
+    }
+}
+```
+
+### Condiments 클래스
+```
+public abstract class CondimentDecorator extends Smoothie {
+    protected Smoothie smoothie;
+    public abstract String getDescription();
+}
+```
+```
+public class MuscleInhancer extends CondimentDecorator {
+    public MuscleInhancer(Smoothie smoothie) {
+        this.smoothie = smoothie;
+    }
+    
+    public String getDescription() {
+        return smoothie.getDescription() + ", muscle inhancer";
+    }
+    
+    public int cost() {
+        return 500 + smoothie.cost();
+    }
+}
+```
+```
+public class SkinInhancer extends CondimentDecorator {
+    public SkinInhancer(Smoothie smoothie) {
+        this.smoothie = smoothie;
+    }
+    
+    public String getDescription() {
+        return smoothie.getDescription() + ", skin inhancer";
+    }
+    
+    public int cost() {
+        return smoothie.cost() + 500;
+    }
+}
+```
+
+### Test 코드
+```
+public class SmoothieKing {
+    public static void main(String[] args) {
+        Smoothie smoothie = new MangoSmoothie();
+        smoothie = new SkinInhancer(smoothie);
+        smoothie = new MuscleInhancer(smoothie);
+        
+        System.out.println(smoothie.getDescription() + " \" + smoothie.cost());
+    }
+}
+```
+
+### 다이어그램
+![Untitled Diagram drawio (5)](https://user-images.githubusercontent.com/82352179/148687560-0db5870f-84d8-4ebe-b882-715a57f0646b.png)
+
