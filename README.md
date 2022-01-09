@@ -724,7 +724,7 @@ public class Keyboard extends KeyboardComponent {
 ![Untitled Diagram drawio (6)](https://user-images.githubusercontent.com/82352179/148687779-e014c7bd-ea66-41e7-8f0c-757fa5321931.png)
 
 
-## 8. 데코레이터 Decorator
+## 9. 데코레이터 Decorator
 * Structural - Object
 
 ### 목적
