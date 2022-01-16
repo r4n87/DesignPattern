@@ -8,6 +8,8 @@
 7. [Bridge](#7-브릿지-Bridge)
 8. [Composite](#8-컴포짓-Composite)
 9. [Decorator](#9-데코레이터-Decorator)
+10. [Facade](#10-파사드-Facade)
+11. [Flyweight](#11-플라이웨이트-Flyweight)
 
 
 ## 1. 싱글톤 Singleton
@@ -834,3 +836,207 @@ public class SmoothieKing {
 ### 다이어그램
 ![Untitled Diagram drawio (5)](https://user-images.githubusercontent.com/82352179/148687560-0db5870f-84d8-4ebe-b882-715a57f0646b.png)
 
+
+## 10. 파사드 Facade
+* Structural - Object
+
+### 목적
+* 복잡한 소프트웨어 바깥쪽의 코드가 라이브러리 안쪽 코드에 의존하는 일을 감소
+* 간단한 인터페이스 제공
+
+### Use When
+* Client와 Sub-classes 사이의 통합 인터페이스가 필요할 때
+
+### 구현
+### 서브클래스1 (불을 켜고 끔)
+```
+public class Light {
+    private boolean on = false;
+    
+    public void turnOn() {
+        on = true;
+        System.out.println("불을 켰다.");
+    }
+    
+    public void turnOff() {
+        on = false;
+        System.out.println("불을 껐다.");
+    }
+    
+    public boolean isOn() {
+        return on;
+    }
+}
+```
+
+### 서브클래스2 (옷을 벗고 입음)
+```
+public class Clothes {
+    private boolean on = false;
+    
+    public void takeOn {
+       on = true;
+       System.out.println("옷을 입었다.");
+    }
+    
+    public void takeOff() {
+       on = false;
+       System.out.println("옷을 벗었다.");
+    }
+    
+    public boolean isOn() {
+       return on;
+    }
+}
+```
+
+### 서브클래스3 (티비를 켜고 끔)
+```
+public class Tv {
+    private boolean on = false;
+    
+    public void turnOn() {
+        on = true;
+        System.out.println("티비를 켰다.");
+    }
+    
+    public void turnOff() {
+        on = false;
+        System.out.println("티비를 껐다.");
+    }
+    
+    public boolean isOn() {
+        return on;
+    }
+}
+```
+
+### Facade 클래스
+```
+public class Facade {
+    private Light light;
+    private Clothes clothes;
+    private Tv tv;
+    
+    public Facade(Light light, Clothes clothes, Tv tv) {
+        this.light = light;
+        this.clothes = clothes;
+        this.tv = tv;
+    }
+    
+    public void in() {
+        System.out.println("집에 들어와서 한 일:");
+        if(!light.isOn()) {
+            light.on();
+        }
+        
+        if(clothes.isOn()) {
+            clothes.off();
+        }
+        
+        if(!tv.isOn()) {
+            tv.on();
+        }
+    }
+    
+    public void out() {
+        System.out.println("집을 나올 때 한 일:");
+        if(light.isOn()) {
+            light.off();
+        }
+        
+        if(!clothes.isOn()) {
+            clothes.on();
+        }
+        
+        if(tv.isOn()) {
+            tv.off();
+        }
+    }
+}
+```
+
+### 다이어그램
+![Untitled Diagram drawio (7)](https://user-images.githubusercontent.com/82352179/149653991-57c212b7-c192-4bff-9aab-c64825893d5b.png)
+
+
+## Reference
+https://lktprogrammer.tistory.com/42
+https://break-over.tistory.com/47
+
+
+## 11. 플라이웨이트 Flyweight
+* Structural - Object
+
+### 목적
+* 공유(Sharing)을 통해 대량의 객체를 효과적으로 지원하기 위해서
+* 같은 사항을 여러번 메모리에 올릴 필요가 없기 때문에
+
+### Use When
+* 어플리케이션에 의해 생성되는 객체의 수가 많을 때
+* 생성된 객체가 오래도록 메모리에 상주하고, 사용되는 횟수가 많을 때
+* 객체의 외적 특성이 클라이언트 프로그램으로부터 정의되어야 할 때
+
+### 구현
+### Flyweight Interface
+```
+public interface Shape {
+    public void draw();
+}
+```
+### ConcreteFlyweight Class
+```
+public class Rectangle implements Shape {
+    private String innerColor;
+    private int yLen;
+    private int xLen;
+    
+    public Rectangle(String color) {
+        this.innerColor = color;
+    }
+    
+    public void setInnerColor(String color) {
+        this.innerColor = color;
+    }
+    
+    public void setYLen(int yLen) {
+        this.yLen = yLen;
+    }
+    
+    public void setXLen(int xLen) {
+        this.xLen = xLen;
+    }
+
+    @Overrride
+    public void draw() {
+        System.out.println("Rectangle [color = " + innerColor
+                           + ", x length = " + xLen
+                           + ", y length = " + yLen);
+    }
+}
+```
+### FlyweightFactory Class
+```
+public class ShapeFactory {
+    private static final HashMap<String, Rectangle> rectangleMap = new HashMap<>();
+    
+    public static Shape getRectangle(String color) {
+        Rectangle rectangle = (Rectangle)rectangleMap.get(color);
+        
+        if(null == rectangle) {
+            rectangle = new Rectangle(color);
+            rectangleMap.put(color, rectangle);
+            System.out.println("[새로운 사각형은 " + color + "색의 사각형입니다.");
+        }
+        
+        return rectangle;
+    }
+}
+```
+
+### 다이어그램
+![Untitled Diagram drawio (8)](https://user-images.githubusercontent.com/82352179/149654473-e81bfeb6-add7-476a-8109-d321765d2993.png)
+
+## Reference
+https://readystory.tistory.com/137
+https://lee1535.tistory.com/106
