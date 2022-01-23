@@ -1,4 +1,4 @@
-#Design Pattern
+# Design Pattern
 1. [Singleton](#1-싱글톤-Singleton)
 2. [Factory Method](#2-팩토리-메서드-Factory-Method)
 3. [Abstract Factory](#3-추상-팩토리-Abstract-Factory)
@@ -10,6 +10,7 @@
 9. [Decorator](#9-데코레이터-Decorator)
 10. [Facade](#10-파사드-Facade)
 11. [Flyweight](#11-플라이웨이트-Flyweight)
+12. [Proxy](#12-프록시-Proxy)
 
 
 ## 1. 싱글톤 Singleton
@@ -1040,3 +1041,54 @@ public class ShapeFactory {
 ## Reference
 https://readystory.tistory.com/137
 https://lee1535.tistory.com/106
+
+
+## 12. 프록시 Proxy
+* Structural - Object
+
+### 목적
+* 대리자 객체를 통해 메서드를 호출, 반환 값을 받는지 모르게 처리하기 위해
+* 실제 기능을 수행하는 객체 대신 가상의 객체를 사용하여 로직의 흐름을 제어할 때
+
+### Use When
+* 흐름의 제어는 필요하되, 결과값을 조작하거나 변경하지는 않아야 할 때
+* 원래 하려던 기능을 수행하며, 부가적인 작업을 수행하려 할 때
+* 비용이 많이 드는 연산을 실제로 필요한 시점에 수행해야 할 때
+
+### 구현
+### 인터페이스
+```
+public interface Order {
+    String cookHamburger();
+}
+```
+### 실제 수행 객체 (요리사)
+```
+public class Cook implements Order {
+    @Override
+    public String cookHamburger(int num) {
+        return num + "번 햄버거를 조리합니다.";
+    }
+}
+```
+### Proxy 객체 (키오스크)
+```
+public class Keyosk implements Order {
+    Order order;
+
+    @Override
+    public String cookHamburger(int num) {
+        System.out.println(num + "번 햄버거 주문을 받았습니다.");
+        System.out.println("요리사에게 햄버거 요리를 요청합니다.");
+        order = new Cook();
+        return cook.cookHamburger(num);
+    }
+}
+```
+
+### 다이어그램
+![Untitled Diagram drawio (9)](https://user-images.githubusercontent.com/82352179/150670177-fda642a7-56aa-4492-9be4-1ca833f2132a.png)
+
+### Reference
+https://limkydev.tistory.com/79
+https://jdm.kr/blog/235
