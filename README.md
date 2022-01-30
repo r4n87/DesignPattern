@@ -11,6 +11,8 @@
 10. [Facade](#10-파사드-Facade)
 11. [Flyweight](#11-플라이웨이트-Flyweight)
 12. [Proxy](#12-프록시-Proxy)
+13. [Chain of Responsibility](#13-책임연쇄-Chain-of-Responsibility)
+14. [Command](#14-커맨드-Command)
 
 
 ## 1. 싱글톤 Singleton
@@ -1092,3 +1094,142 @@ public class Keyosk implements Order {
 ### Reference
 https://limkydev.tistory.com/79
 https://jdm.kr/blog/235
+
+
+## 13. 책임 연쇄 Chain of Responsibility
+* Behavioral
+
+### 목적
+* 클라이언트의 요청을 처리할 수 있는 처리 객체를 집합으로 만들어 결합을 느슨히 하기 위해서
+* 처리 객체의 추가, 삭제를 유연성있게 하기 위해서
+
+### Use When
+* 요청의 발신자와 수신자를 분리할 때
+* 요청을 처리할 수 있는 객체가 여러개일 때 그 중 하나에 요청을 보내려는 경우
+* 코드에서 처리 객체를 명시적으로 지정하고 싶지 않은 경우
+
+### 구현
+### Handler
+```
+interface BlockToy {
+   void setNextBlock(BlockToy nextBlock);
+   void build(Block block);
+}
+```
+
+### Object
+```
+class Block {
+   private int number;
+   
+   public Block(int number) {
+       this.number = number;
+   }
+   
+   public String getNumber() {
+       return this.number;
+   }
+}
+```
+
+### Concrete Handler
+```
+class RedBlock implements BlockToy {
+    private BlockToy chain;
+    
+    @Override
+    public void setNextBlock(BlockToy nextBlock) {
+        this.chain = nextBlock;
+    }
+    
+    @Override
+    public void buildBlock(Block block) {
+        if(block.getNumber == cur) {
+            int number = block.number();
+            System.out.println("This block is " + number + " block.");
+            if(3 != cur) {
+                cur++;
+                this.chain.buildBlock(new Block(cur));
+            }
+        } else {
+            this.chain.buildBlock(block);
+        }
+    }
+}
+```
+
+### 다이어그램
+![Untitled Diagram drawio (10)](https://user-images.githubusercontent.com/82352179/151704687-aa01c0af-7ab0-406b-84bc-9a77439027cb.png)
+
+### Reference
+https://always-intern.tistory.com/1
+
+## 14. 커맨드 Command
+* Behavioral - Object
+
+### 목적
+* 실행할 기능을 캡슐화하여 재사용성이 높은 클래스를 설계하기 위해서
+* 실행을 요구하는 호출자 클래스와 실제 기능을 실행하는 수신자 클래스 사이의 의존성을 제거하기 위해서
+
+### Use When
+* 이벤트가 발생했을 때 실행할 기능이 다양한 경우
+* 이벤트에 변경이 필요할 때, 이벤트를 발생시키는 클래스를 변경하지 않고 재사용하고자 하는 경우
+
+### 구현
+### Command
+```
+public inter face Command {
+   public abstract void execute();
+}
+```
+### Walldoor
+```
+public class Walldoor {
+    private Command command;
+    public Walldoor(Command command) {
+        setCommand(command);
+    }
+    
+    public void setCommand(Command command) {
+        this.command = command;
+    }
+    
+    public void pressed() {
+        command.execute();
+    }
+}
+```
+
+### DoorCommand
+```
+public class Door {
+   public void open() { System.out.println("Open the door"); }
+}
+```
+```
+public class DoorCommand implements Command {
+    private Door door;
+    public DoorCommand(Door door) { this.door = door; }
+    public void execute() { door.open(); }
+}
+```
+
+### TempCommand
+```
+public class Temp {
+   public void turnOff() { System.out.println("Turn off the temp."); }
+}
+```
+```
+public class TempCommand implements Command {
+    private Temp temp;
+    public TempCommand(Temp temp) { this.temp = temp; }
+    public void execute() { temp.turnOff(); }
+}
+```
+
+### 다이어그램
+![Untitled Diagram drawio (11)](https://user-images.githubusercontent.com/82352179/151704977-f3275100-495c-4b22-91a4-21ee525fab85.png)
+
+### Reference
+https://gmlwjd9405.github.io/2018/07/07/command-pattern.html
