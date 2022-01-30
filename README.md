@@ -11,7 +11,7 @@
 10. [Facade](#10-파사드-Facade)
 11. [Flyweight](#11-플라이웨이트-Flyweight)
 12. [Proxy](#12-프록시-Proxy)
-13. [Chain of Responsibility](#13-책임연쇄-Chain-of-Responsibility)
+13. [Chain of Responsibility](#13-책임-연쇄-Chain-of-Responsibility)
 14. [Command](#14-커맨드-Command)
 
 
