@@ -13,6 +13,7 @@
 12. [Proxy](#12-프록시-Proxy)
 13. [Chain of Responsibility](#13-책임-연쇄-Chain-of-Responsibility)
 14. [Command](#14-커맨드-Command)
+15. [Interpreter](#15-인터프리터-Interpreter)
 
 
 ## 1. 싱글톤 Singleton
@@ -1233,3 +1234,88 @@ public class TempCommand implements Command {
 
 ### Reference
 https://gmlwjd9405.github.io/2018/07/07/command-pattern.html
+
+
+## 15. 인터프리터 Interperter
+* Behavioral
+
+### 목적
+* 문법 규칙을 클래스화 하여 일련의 규칙으로 정의하기 위해서
+* 자주 등장하는 문제를 간단한 언어로 정의하고 재사용하기 위해서
+
+### Use When
+* 주로 SQL 파싱, 기호를 처리하기 위해 사용
+
+### 장단점
+* (+) 문법의 추가 및 수정, 구현이 쉬워짐
+* (-) 복잡한 문법의 경우 관리 및 유지가 어려워짐
+
+### 구현
+### Abstract Expression
+```
+public interface Expression {
+    boolean interpreter(String context);
+}
+```
+
+### Terminal Expression
+```
+public class TerminalExpression implements Expression {
+    private String data;
+    
+    public TerminalExpression(String data) {
+       this.data = data;
+    }
+    
+    @Override
+    public boolean interpreter(String context) {
+        if(context.contains(data)) {
+            return true;
+        }
+        return false;
+    }
+}
+```
+### Non-Terminal Expression
+### AndExpression
+```
+public class AndExpression implements Expression {
+    private Expression expression1 = null;
+    private Expression expression2 = null;
+    
+    public AndExpression(Expression expr1, Expression expr2) {
+        this.expression1 = expr1;
+        this.expression2 = expr2;
+    }
+    
+    @Override 
+    public boolean interpreter(String context) {
+        return expression1.interpreter(context) && expression2.interpreter(context);
+    }
+}
+```
+### OrExpression
+```
+public class OrExpression implements Expression {
+    private Expression expression1 = null;
+    private Expression expression2 = null;
+    
+    public OrExpression(Expression expr1, Expression expr2) {
+        this.expression1 = expr1;
+        this.expression2 = expr2;
+    }
+    
+    @Override 
+    public boolean interpreter(String context) {
+        return expression1.interpreter(context) || expression2.interpreter(context);
+    }
+}
+```
+
+### 다이어그램
+![class drawio](https://user-images.githubusercontent.com/82352179/152683495-94122117-f241-4bc4-9ad9-bc9f14a75362.png)
+
+### Reference
+https://mantaray.tistory.com/85
+https://always-intern.tistory.com/11
+https://velog.io/@cham/Design-Pattern-%EC%9D%B8%ED%84%B0%ED%94%84%EB%A6%AC%ED%84%B0-%ED%8C%A8%ED%84%B4Interpreter-Pattern
