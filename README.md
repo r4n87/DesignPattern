@@ -1236,7 +1236,7 @@ public class TempCommand implements Command {
 https://gmlwjd9405.github.io/2018/07/07/command-pattern.html
 
 
-## 15. 인터프리터 Interperter
+## 15. 인터프리터 Interpreter
 * Behavioral
 
 ### 목적
