@@ -14,6 +14,7 @@
 13. [Chain of Responsibility](#13-책임-연쇄-Chain-of-Responsibility)
 14. [Command](#14-커맨드-Command)
 15. [Interpreter](#15-인터프리터-Interpreter)
+16. [Iterator](#16-이터레이터-Iterator)
 
 
 ## 1. 싱글톤 Singleton
@@ -1316,6 +1317,57 @@ public class OrExpression implements Expression {
 ![class drawio](https://user-images.githubusercontent.com/82352179/152683495-94122117-f241-4bc4-9ad9-bc9f14a75362.png)
 
 ### Reference
-https://mantaray.tistory.com/85
-https://always-intern.tistory.com/11
+https://mantaray.tistory.com/85  
+https://always-intern.tistory.com/11  
 https://velog.io/@cham/Design-Pattern-%EC%9D%B8%ED%84%B0%ED%94%84%EB%A6%AC%ED%84%B0-%ED%8C%A8%ED%84%B4Interpreter-Pattern
+
+## 16. 이터레이터 Iterator
+* Behavioral
+
+### 목적
+* 자바의 컬렉션 프레임워크에 저장된 요소들을 읽어오기 위해서
+* 어떠한 컬렉션이라도 동일한 방식으로 접근 가능하도록 함
+
+### Use When
+* Linked List에서 전체 요소를 읽지 않으려고 할 때
+* 인덱스로 접근하여 컬렉션에 더 효율적으로 접근하고자 할 때
+
+### 구현 방법
+### ArrayList
+```
+public static void main(String[] args) {
+    ArrayList<String> class = new ArrayList<>();
+    class.add("국어");
+    class.add("수학");
+    class.add("영어");
+    
+    Iterator<String> iterator = class.iterator();
+    while(iterator.hasNext()) {
+        String nextClass = iterator.next();
+        System.out.println(nextClass);
+    }
+}
+```
+
+### Set
+```
+public static void main(String[] args) {
+    Set<String> school = new HashSet<>();
+    school.add("초등학교");
+    school.add("중학교");
+    school.add("고등학교");
+    school.add("대학교");
+    
+    for(String nextSchool : school) {
+        System.out.println(nextSchool); 
+    }
+}
+```
+
+### 다이어그램
+![Untitled Diagram drawio (12)](https://user-images.githubusercontent.com/82352179/153783125-64d8f016-6a52-420f-adf3-ffab66e56906.png)
+
+
+### Reference
+https://thefif19wlsvy.tistory.com/41  
+https://velog.io/@secdoc/%EB%94%94%EC%9E%90%EC%9D%B8%ED%8C%A8%ED%84%B4-%EB%B0%98%EB%B3%B5%EC%9E%90-%ED%8C%A8%ED%84%B4Iterator-Pattern
