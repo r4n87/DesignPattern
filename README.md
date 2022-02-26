@@ -15,6 +15,8 @@
 14. [Command](#14-커맨드-Command)
 15. [Interpreter](#15-인터프리터-Interpreter)
 16. [Iterator](#16-이터레이터-Iterator)
+17. [Observer](#17-옵저버-Observer)
+18. [Template Method](#18-템플릿메서드-Template-Method)
 
 
 ## 1. 싱글톤 Singleton
@@ -1367,7 +1369,124 @@ public static void main(String[] args) {
 ### 다이어그램
 ![Untitled Diagram drawio (12)](https://user-images.githubusercontent.com/82352179/153783125-64d8f016-6a52-420f-adf3-ffab66e56906.png)
 
-
 ### Reference
 https://thefif19wlsvy.tistory.com/41  
 https://velog.io/@secdoc/%EB%94%94%EC%9E%90%EC%9D%B8%ED%8C%A8%ED%84%B4-%EB%B0%98%EB%B3%B5%EC%9E%90-%ED%8C%A8%ED%84%B4Iterator-Pattern
+
+## 17. 옵저버 Observer
+* Behavioral
+
+### 목적
+* 어떠한 객체의 상태가 변할 때 연관된 객체들에게 알림을 보내는 패턴
+
+### Use When
+* 분산 이벤트 핸들링 시스템 구현 시
+* 상대 객체에게 의존하지 않고 통보하려고 할 때
+
+### 장점
+* 느슨한 결합 구조를 만들어 유연하고 객체간의 의존성 낮춤
+
+### 단점
+* 느슨한 결합 구조로 인하여 상태 관리가 어려워질 수 있음
+
+### 구현 방법
+### 공통 Subject Interface
+```
+public interface Subject {
+   register(Observer observer);
+   remove(Observer observer);
+   notifyObservers();
+}
+```
+
+### Push - 주제 객체가 상태 변경을 알릴 때 데이터를 함께 보냄
+```
+pulic interface Observer {
+    update(Stock stock);
+}
+```
+```
+public class SmsObserver implements Observer {
+    public void update(Stock stock) {
+        System.out.println("SMS로 재고 알림");
+        System.out.println(stock);
+    }
+}
+```
+```
+public class KakaoObserver implements Observer {
+    public void update(Stock stock) {
+        System.out.println("카카오톡으로 재고 알림");
+        System.out.println(stock);
+    }
+}
+```
+
+```
+public class ShoppingMall implements Subject {
+    private List<Observer> observers;
+    private Stock stock;
+    
+    public ShoppingMall(List<Observer> observers) {
+        this.observers = observers;
+    }
+    
+    public void register(Observer observer) {
+        observers.add(observer);
+    }
+    
+    public void remove(Observer observer) {
+        int index = observers.indexOf(observer);
+        if(0 <= index) {
+            observers.remove(index);
+        }
+    }
+    
+    public void notifyObservers() {
+        for(Observer observer : observers) {
+            observer.update(article);
+        }
+    }
+    
+    public void addStock(Stock stock) {
+        this.stock = stock;
+        notifyObservers();
+    }
+}
+```
+
+### Pull - 주제 객체가 상태 변경을 알리면, 옵저버 객체가 변경된 데이터를 직접 가져감
+```
+public interface Observer {
+    update(Subject subject);
+}
+```
+```
+public class SmsObserver implements Observer {
+    public void update(Subject subject) {
+        System.out.println("SMS로 재고 알림");
+        if(subject instanceof ShoppingMall) {
+            ShoppingMall shoppingMall = (ShoppingMall) subject;
+            Stock stock = shoppingMall.getStock();
+            System.out.println(stock);
+        }
+    }
+}
+```
+```
+public class KakaoObserver implements Observer {
+    public void update(Subject subject) {
+        System.out.println("카카오톡으로 재고 알림");
+        if(subject instanceof ShoppingMall) {
+            ShoppingMall shoppingMall = (ShoppingMall) subject;
+            Stock stock = shoppingMall.getStock();
+            System.out.println(stock);
+        }
+    }
+}
+```
+### 다이어그램
+![Untitled Diagram drawio (13)](https://user-images.githubusercontent.com/82352179/155842032-0dce6475-09b8-44f1-92cd-7b71a2e448cd.png)
+
+### Reference
+https://im-yeobi.io/posts/design-pattern/observer-pattern/
