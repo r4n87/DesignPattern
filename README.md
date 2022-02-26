@@ -16,7 +16,7 @@
 15. [Interpreter](#15-인터프리터-Interpreter)
 16. [Iterator](#16-이터레이터-Iterator)
 17. [Observer](#17-옵저버-Observer)
-18. [Template Method](#18-템플릿메서드-Template-Method)
+18. [Template Method](#18-템플릿-메서드-Template-Method)
 
 
 ## 1. 싱글톤 Singleton
@@ -1373,6 +1373,7 @@ public static void main(String[] args) {
 https://thefif19wlsvy.tistory.com/41  
 https://velog.io/@secdoc/%EB%94%94%EC%9E%90%EC%9D%B8%ED%8C%A8%ED%84%B4-%EB%B0%98%EB%B3%B5%EC%9E%90-%ED%8C%A8%ED%84%B4Iterator-Pattern
 
+
 ## 17. 옵저버 Observer
 * Behavioral
 
@@ -1490,3 +1491,78 @@ public class KakaoObserver implements Observer {
 
 ### Reference
 https://im-yeobi.io/posts/design-pattern/observer-pattern/
+
+
+## 18. 템플릿 메서드 Template Method
+* Behavioral
+
+### 목적
+* 전체적인 구조는 바꾸지 않으면서 특정 작업의 내용만 바꾸기 위해서
+
+### Use When
+* 두 개 이상의 프로그램이 동일한 프레임 하에 동작할 때 일부는 일괄 관리, 일부는 각각 만들고 싶을 때
+
+### 장점
+* 중복코드를 최소화
+* 핵심 로직 관리가 용이
+* 객체지향적 구성
+
+### 단점
+* 추상 메소드가 많아져 클래스 관리가 복잡
+
+### 구현 코드
+```
+public abstract class KeyboardTemplate {
+    //final 선언으로 override 방지
+    public final void assembleKeyboard() {
+        addLED();
+        addStabilizer();
+        addSwitch();
+        addKeyCap();
+        System.out.println("Keyboard is done!");
+    }
+    
+    public void addLED() {
+        System.out.println("1. add LED.");
+    }
+    
+    public abstract void addStabilizer() {
+        System.out.println("2. add Stabilizer.");
+    }
+    
+    public abstract void addSwitch();
+    public abstract void addKeyCap();
+}
+```
+```
+public class noisyKeyboard extends KeyboardTemplate {
+    @Override
+    public void addSwitch() {
+        System.out.println("3. add Blue Switch.");
+    }
+    
+    @Override
+    public void addKeyCap() {
+        System.out.println("4. Add PBT Key Cap.");
+    }
+}
+```
+```
+public class quietKeyboard extends KeyboardTemplate {
+    @Override
+    public void addSwitch() {
+        System.out.println("3. add Red Switch.");
+    }
+    
+    @Override
+    public void addKeyCap() {
+        System.out.println("4. Add ABS Key Cap.");
+    }
+}
+```
+### 다이어그램
+![Untitled Diagram drawio (14)](https://user-images.githubusercontent.com/82352179/155842733-f41ce647-6b55-45ef-ab09-a806b742e87f.png)
+
+### Reference
+https://coding-factory.tistory.com/712
+https://niceman.tistory.com/142
